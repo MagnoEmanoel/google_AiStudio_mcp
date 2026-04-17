@@ -1,9 +1,5 @@
-/**
- * MCP Bridge - Content Script
- * Injects the sidebar and manages the connection to local MCP.
- */
-
 console.log("MCP Bridge: Content script initializing...");
+alert("MCP Bridge Extension Loaded! If you don't see the sidebar, please check the console (F12).");
 
 function createSidebar() {
     console.log("MCP Bridge: Creating sidebar elements...");

@@ -59,7 +59,7 @@ A community-ready browser extension and local server that bridges **Google AI St
 - **Selective Injection:** You decide exactly what content goes to Google's servers.
 
 ---
-## 👨‍💻 Author
+## Author
 
 **Magno Emanoel**
 - Email: magno_emanoel@outlook.com

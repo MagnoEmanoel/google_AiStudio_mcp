@@ -13,7 +13,7 @@
   "content_scripts": [
     {
       "matches": ["https://aistudio.google.com/*"],
-      "js": ["content.js", "ui_logic.js"],
+      "js": ["ui_logic.js", "content.js"],
       "css": ["sidebar.css"]
     }
   ],
