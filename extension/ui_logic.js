@@ -17,22 +17,44 @@ async function fetchFromMCP(toolName, args) {
 }
 
 function injectToChat(text) {
-    const textarea = document.querySelector('textarea.prompt-textarea') || document.querySelector('[role="textbox"]');
+    // Try multiple common selectors for Google AI Studio
+    const selectors = [
+        'ms-prompt-textarea textarea',
+        'div[contenteditable="true"]',
+        '.prompt-textarea',
+        '[role="textbox"]',
+        'textarea'
+    ];
+    
+    let textarea = null;
+    for (const selector of selectors) {
+        textarea = document.querySelector(selector);
+        if (textarea) break;
+    }
+
     if (textarea) {
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const currentText = textarea.value || textarea.innerText;
+        console.log("MCP Bridge: Found input element", textarea);
         
-        // Handle both standard textareas and contenteditable DIVs
-        if (textarea.tagName === 'TEXTAREA') {
+        // Handle ContentEditable (Modern AI Studio)
+        if (textarea.getAttribute('contenteditable') === 'true' || textarea.tagName !== 'TEXTAREA') {
+            const currentText = textarea.innerText;
+            textarea.innerText = currentText ? currentText + "\n" + text : text;
+            textarea.dispatchEvent(new Event('input', { bubbles: true }));
+        } 
+        // Handle standard TextArea
+        else {
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const currentText = textarea.value;
             textarea.value = currentText.substring(0, start) + text + currentText.substring(end);
             textarea.dispatchEvent(new Event('input', { bubbles: true }));
-        } else {
-            textarea.innerText = currentText + "\n" + text;
         }
+        
+        // Final attempt to trigger AI Studio's internal listeners
+        textarea.focus();
     } else {
         console.error("Could not find AI Studio chat input");
-        alert("Could not find chat input. Please make sure you are in a chat session.");
+        alert("Ops! Não consegui encontrar o campo de texto do Google AI Studio. Tente clicar no campo de texto antes de injetar o arquivo.");
     }
 }
 
