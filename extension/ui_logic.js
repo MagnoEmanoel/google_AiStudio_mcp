@@ -132,3 +132,17 @@ async function injectToSystemInstructions(text) {
         return true;
     }
 }
+
+async function setupAgenticSystemInstructions() {
+    console.log("MCP Bridge: Configuring Agentic Mode...");
+    const instructions = `\n\n[MCP AGENT MODE] Você tem acesso ao sistema de arquivos local.
+Se precisar de contexto adicional, escreva: [READ: /caminho/do/arquivo]
+O conteúdo será injetado nestas instruções. Responda apenas com a análise.`;
+
+    const success = await injectToSystemInstructions(instructions);
+    if (success) {
+        alert("Gemini configurado! Agora ele sabe como pedir arquivos.");
+    } else {
+        alert("Campo 'System Instructions' não encontrado. Cole as instruções manualmente.");
+    }
+}
