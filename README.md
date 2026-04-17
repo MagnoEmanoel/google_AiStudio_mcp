@@ -35,10 +35,15 @@ A community-ready browser extension and local server that bridges **Google AI St
 
 ### 3. Extension Installation
 
+#### Chrome
 1. Open Chrome and navigate to `chrome://extensions`.
 2. Enable **Developer Mode** (top right).
-3. Click **Load unpacked**.
-4. Select the `extension` folder from this project.
+3. Click **Load unpacked** and select the `extension` folder.
+
+#### Firefox
+1. Open Firefox and navigate to `about:debugging#/runtime/this-firefox`.
+2. Click **Load Temporary Add-on...**.
+3. Select the `manifest.json` file inside the `extension` folder.
 
 ### 4. Usage
 
