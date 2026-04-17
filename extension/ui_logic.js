@@ -102,18 +102,35 @@ async function loadWholeRepo(path) {
 }
 
 async function injectToSystemInstructions(text) {
-    // Selectors for the System Instructions field in AI Studio
+    // Better selectors to avoid buttons and target the actual input area
     const selectors = [
         'ms-system-instructions textarea',
         'ms-system-instructions [contenteditable="true"]',
-        '.system-instructions-container textarea',
-        '[aria-label*="System instructions"]'
+        'textarea[aria-label*="instructions" i]',
+        'div[aria-label*="instructions" i][contenteditable="true"]',
+        '.system-instructions-container textarea'
     ];
     
     let target = null;
     for (const selector of selectors) {
-        target = document.querySelector(selector);
-        if (target) break;
+        const found = document.querySelector(selector);
+        // Ensure it's not a button or something non-editable
+        if (found && (found.tagName === 'TEXTAREA' || found.getAttribute('contenteditable') === 'true')) {
+            target = found;
+            break;
+        }
+    }
+
+    // Special case: If we only find the button-card, we might need to click it first
+    if (!target) {
+        const card = document.querySelector('.system-instructions-card, [aria-label*="System instructions"]');
+        if (card && card.tagName === 'BUTTON') {
+            console.log("MCP Bridge: System instructions card is collapsed, clicking to open...");
+            card.click();
+            // Wait a bit for the animation/render
+            await new Promise(r => setTimeout(r, 500));
+            return injectToSystemInstructions(text); // Recursive retry
+        }
     }
 
     if (target) {
