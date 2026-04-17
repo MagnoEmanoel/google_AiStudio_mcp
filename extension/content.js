@@ -3,7 +3,11 @@
  * Injects the sidebar and manages the connection to local MCP.
  */
 
+console.log("MCP Bridge: Content script initializing...");
+
 function createSidebar() {
+    console.log("MCP Bridge: Creating sidebar elements...");
+    
     const sidebar = document.createElement('div');
     sidebar.id = 'mcp-sidebar';
     sidebar.className = 'hidden';
@@ -41,55 +45,71 @@ function createSidebar() {
 
     const toggle = document.createElement('div');
     toggle.id = 'mcp-toggle';
+    toggle.className = 'hidden'; // Start at right: 0 since sidebar is hidden
     toggle.innerHTML = '‹';
     toggle.onclick = () => {
+        console.log("MCP Bridge: Toggle clicked");
         sidebar.classList.toggle('hidden');
+        toggle.classList.toggle('hidden');
         toggle.innerHTML = sidebar.classList.contains('hidden') ? '‹' : '›';
     };
 
     document.body.appendChild(sidebar);
     document.body.appendChild(toggle);
+    console.log("MCP Bridge: Sidebar and Toggle appended to body.");
 
     // Event Listeners
-    document.getElementById('btn-connect').onclick = async () => {
-        try {
-            const status = document.getElementById('mcp-status');
-            status.innerText = "Connecting...";
-            status.style.color = "#f4b400";
-            
-            // Establish SSE connection
-            const eventSource = new EventSource('http://localhost:3000/sse');
-            eventSource.onopen = () => {
-                status.innerText = "Connected to localhost:3000";
-                status.style.color = "#0f9d58";
-                document.getElementById('btn-connect').style.display = 'none';
-            };
-            eventSource.onerror = () => {
-                status.innerText = "Connection Failed. Is the server running?";
-                status.style.color = "#ff4b4b";
-                eventSource.close();
-            };
-        } catch (e) {
-            console.error(e);
-        }
-    };
+    const btnConnect = document.getElementById('btn-connect');
+    if (btnConnect) {
+        btnConnect.onclick = async () => {
+            try {
+                const status = document.getElementById('mcp-status');
+                status.innerText = "Connecting...";
+                status.style.color = "#f4b400";
+                
+                console.log("MCP Bridge: Attempting SSE connection to localhost:3000...");
+                // Establish SSE connection
+                const eventSource = new EventSource('http://localhost:3000/sse');
+                eventSource.onopen = () => {
+                    console.log("MCP Bridge: SSE Connected!");
+                    status.innerText = "Connected to localhost:3000";
+                    status.style.color = "#0f9d58";
+                    btnConnect.style.display = 'none';
+                };
+                eventSource.onerror = () => {
+                    console.error("MCP Bridge: SSE Connection failed.");
+                    status.innerText = "Connection Failed. Is the server running?";
+                    status.style.color = "#ff4b4b";
+                    eventSource.close();
+                };
+            } catch (e) {
+                console.error("MCP Bridge Error:", e);
+            }
+        };
+    }
 
-    document.getElementById('btn-load-root').onclick = () => {
-        const path = prompt("Enter the absolute path of the local folder:", "/home/magno/pessoal");
-        if (path) {
-            loadDirectory(path);
-        }
-    };
+    const btnLoadRoot = document.getElementById('btn-load-root');
+    if (btnLoadRoot) {
+        btnLoadRoot.onclick = () => {
+            const path = prompt("Enter the absolute path of the local folder:", "/mnt/c/Users/magno.emanoel/Documents/meu_agente");
+            if (path) {
+                loadDirectory(path);
+            }
+        };
+    }
 
-    document.getElementById('btn-repo-all').onclick = () => {
-        const path = prompt("Enter the absolute path of the repository:", "/home/magno/pessoal");
-        if (path) {
-            loadWholeRepo(path);
-        }
-    };
+    const btnRepoAll = document.getElementById('btn-repo-all');
+    if (btnRepoAll) {
+        btnRepoAll.onclick = () => {
+            const path = prompt("Enter the absolute path of the repository:", "/mnt/c/Users/magno.emanoel/Documents/meu_agente");
+            if (path) {
+                loadWholeRepo(path);
+            }
+        };
+    }
 }
 
-// Initialize when the page is ready
+// Initialize
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', createSidebar);
 } else {
