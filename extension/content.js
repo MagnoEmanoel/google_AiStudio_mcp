@@ -41,11 +41,9 @@ function createSidebar() {
 
     const toggle = document.createElement('div');
     toggle.id = 'mcp-toggle';
-    toggle.className = 'hidden';
     toggle.innerHTML = '‹';
     toggle.onclick = () => {
         sidebar.classList.toggle('hidden');
-        toggle.classList.toggle('hidden');
         toggle.innerHTML = sidebar.classList.contains('hidden') ? '‹' : '›';
     };
 
@@ -65,8 +63,6 @@ function createSidebar() {
                 status.innerText = "Connected to localhost:3000";
                 status.style.color = "#0f9d58";
                 document.getElementById('btn-connect').style.display = 'none';
-                toggle.classList.remove('hidden');
-                sidebar.classList.remove('hidden');
             };
             eventSource.onerror = () => {
                 status.innerText = "Connection Failed. Is the server running?";
