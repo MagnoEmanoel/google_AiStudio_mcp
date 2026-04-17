@@ -100,3 +100,35 @@ async function loadWholeRepo(path) {
         injectToChat(`--- REPO STRUCTURE ---\n${structure}`);
     }
 }
+
+async function injectToSystemInstructions(text) {
+    // Selectors for the System Instructions field in AI Studio
+    const selectors = [
+        'ms-system-instructions textarea',
+        'ms-system-instructions [contenteditable="true"]',
+        '.system-instructions-container textarea',
+        '[aria-label*="System instructions"]'
+    ];
+    
+    let target = null;
+    for (const selector of selectors) {
+        target = document.querySelector(selector);
+        if (target) break;
+    }
+
+    if (target) {
+        console.log("MCP Bridge: Injecting into System Instructions", target);
+        if (target.getAttribute('contenteditable') === 'true' || target.tagName !== 'TEXTAREA') {
+            target.innerText += text;
+        } else {
+            target.value += text;
+        }
+        target.dispatchEvent(new Event('input', { bubbles: true }));
+        return true;
+    } else {
+        // Fallback: If no system instructions field found, inject into chat
+        console.warn("MCP Bridge: System Instructions field not found, falling back to chat.");
+        injectToChat(text);
+        return true;
+    }
+}

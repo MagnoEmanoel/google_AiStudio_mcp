@@ -112,7 +112,55 @@ function createSidebar() {
 
 // Initialize
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', createSidebar);
+    document.addEventListener('DOMContentLoaded', () => {
+        createSidebar();
+        startAgenticObserver();
+    });
 } else {
     createSidebar();
+    startAgenticObserver();
+}
+
+/**
+ * Agentic Mode: Observes the chat for commands like [READ: path]
+ */
+function startAgenticObserver() {
+    console.log("MCP Bridge: Agentic Observer started.");
+    
+    const observer = new MutationObserver((mutations) => {
+        // Look for new messages from Gemini
+        const lastResponse = document.querySelector('ms-chat-view .model-message:last-child');
+        if (lastResponse && !lastResponse.dataset.mcpProcessed) {
+            const text = lastResponse.innerText;
+            const match = text.match(/\[READ:\s*(.*?)\]/);
+            
+            if (match) {
+                const filePath = match[1].trim();
+                console.log("MCP Bridge: Agentic request detected for:", filePath);
+                lastResponse.dataset.mcpProcessed = "true";
+                handleAgenticRead(filePath);
+            }
+        }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+}
+
+async function handleAgenticRead(path) {
+    try {
+        console.log("MCP Bridge: Executing agentic read for", path);
+        const fileContent = await fetchFromMCP('local_explorer', { action: 'read', path });
+        
+        // Inject into System Instructions (to keep chat clean)
+        const injectedText = `\n\n--- AUTO-INJECTED CONTEXT: ${path} ---\n${fileContent}\n--- END CONTEXT ---`;
+        const success = await injectToSystemInstructions(injectedText);
+        
+        if (success) {
+            injectToChat(`[System: Context updated with file ${path}]`);
+            // Optional: Auto-click send button if you want fully hands-free
+            // document.querySelector('button[aria-label="Run"]').click();
+        }
+    } catch (e) {
+        console.error("MCP Bridge Agentic Error:", e);
+    }
 }
