@@ -12,9 +12,15 @@
   ],
   "content_scripts": [
     {
-      "matches": ["https://aistudio.google.com/*"],
+      "matches": [
+        "https://aistudio.google.com/*",
+        "https://aistudio.google.com/app/*",
+        "https://aistudio.google.com/prompts/*"
+      ],
       "js": ["ui_logic.js", "content.js"],
-      "css": ["sidebar.css"]
+      "css": ["sidebar.css"],
+      "run_at": "document_idle",
+      "all_frames": true
     }
   ],
   "action": {
