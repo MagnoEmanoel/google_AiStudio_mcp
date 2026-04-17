@@ -126,20 +126,24 @@
     color: #fff !important;
     font-size: 18px !important;
     font-weight: bold !important;
-    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     visibility: visible !important;
     opacity: 1 !important;
     pointer-events: auto !important;
-    display: block !important;
-    min-width: 20px !important;
-    min-height: 40px !important;
-    line-height: 40px !important;
-    text-align: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 30px !important;
+    height: 60px !important;
     box-shadow: -3px 0 10px rgba(0, 0, 0, 0.5) !important;
 }
 
-#mcp-toggle.sidebar-open {
+#mcp-sidebar.open + #mcp-toggle {
     right: 320px !important;
+}
+
+#mcp-sidebar:not(.open) {
+    transform: translateX(100%) !important;
 }
 
 #mcp-footer {
