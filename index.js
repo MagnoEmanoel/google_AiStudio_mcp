@@ -84,43 +84,51 @@ async function getFiles(dir) {
 }
 
 /**
- * 2. Tool Logic Implementation
+ * Shared Tool Handler Logic
+ */
+async function handleToolCall(name, args) {
+  // LOCAL FILE SYSTEM LOGIC
+  if (name === "local_explorer") {
+    if (args.action === "list") {
+      const files = await fs.readdir(args.path);
+      return { content: [{ type: "text", text: `Contents of ${args.path}:\n${files.join("\n")}` }] };
+    }
+    const content = await fs.readFile(args.path, "utf-8");
+    return { content: [{ type: "text", text: content }] };
+  }
+
+  if (name === "list_directory_recursive") {
+    const allFiles = await getFiles(args.path);
+    const relativeFiles = allFiles.map(f => path.relative(args.path, f));
+    return { content: [{ type: "text", text: `Recursive structure of ${args.path}:\n${relativeFiles.join("\n")}` }] };
+  }
+
+  // PRIVATE GITHUB LOGIC
+  if (name === "git_private_reader") {
+    const response = await octokit.rest.repos.getContent({
+      owner: args.owner,
+      repo: args.repo,
+      path: args.path || ""
+    });
+
+    if (Array.isArray(response.data)) {
+      const list = response.data.map(f => f.name).join("\n");
+      return { content: [{ type: "text", text: `Files in Repo:\n${list}` }] };
+    }
+    const code = Buffer.from(response.data.content, 'base64').toString('utf-8');
+    return { content: [{ type: "text", text: code }] };
+  }
+
+  throw new Error(`Tool not found: ${name}`);
+}
+
+/**
+ * 2. Tool Logic Implementation (MCP Standard)
  */
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
-
   try {
-    // LOCAL FILE SYSTEM LOGIC
-    if (name === "local_explorer") {
-      if (args.action === "list") {
-        const files = await fs.readdir(args.path);
-        return { content: [{ type: "text", text: `Contents of ${args.path}:\n${files.join("\n")}` }] };
-      }
-      const content = await fs.readFile(args.path, "utf-8");
-      return { content: [{ type: "text", text: content }] };
-    }
-
-    if (name === "list_directory_recursive") {
-      const allFiles = await getFiles(args.path);
-      const relativeFiles = allFiles.map(f => path.relative(args.path, f));
-      return { content: [{ type: "text", text: `Recursive structure of ${args.path}:\n${relativeFiles.join("\n")}` }] };
-    }
-
-    // PRIVATE GITHUB LOGIC
-    if (name === "git_private_reader") {
-      const response = await octokit.rest.repos.getContent({
-        owner: args.owner,
-        repo: args.repo,
-        path: args.path || ""
-      });
-
-      if (Array.isArray(response.data)) {
-        const list = response.data.map(f => f.name).join("\n");
-        return { content: [{ type: "text", text: `Files in Repo:\n${list}` }] };
-      }
-      const code = Buffer.from(response.data.content, 'base64').toString('utf-8');
-      return { content: [{ type: "text", text: code }] };
-    }
+    return await handleToolCall(name, args);
   } catch (err) {
     return { isError: true, content: [{ type: "text", text: `Error: ${err.message}` }] };
   }
@@ -141,6 +149,20 @@ app.post("/messages", async (req, res) => {
   console.log("Received message");
   if (transport) {
     await transport.handlePostMessage(req, res);
+  }
+});
+
+/**
+ * 4. Direct Bridge for Extension
+ */
+app.post("/call", express.json(), async (req, res) => {
+  const { name, arguments: args } = req.body;
+  console.log(`Direct call to tool: ${name}`);
+  try {
+    const result = await handleToolCall(name, args);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

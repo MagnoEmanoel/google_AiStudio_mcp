@@ -3,18 +3,17 @@
  */
 
 async function fetchFromMCP(toolName, args) {
-    const response = await fetch('http://localhost:3000/messages', {
+    const response = await fetch('http://localhost:3000/call', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            jsonrpc: '2.0',
-            id: Date.now(),
-            method: 'call_tool',
-            params: { name: toolName, arguments: args }
+            name: toolName,
+            arguments: args
         })
     });
     const data = await response.json();
-    return data.result.content[0].text;
+    if (data.error) throw new Error(data.error);
+    return data.content[0].text;
 }
 
 function injectToChat(text) {

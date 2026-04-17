@@ -1,9 +1,14 @@
 console.log("MCP Bridge: Content script initializing...");
-alert("MCP Bridge Extension Loaded! If you don't see the sidebar, please check the console (F12).");
 
 function createSidebar() {
     console.log("MCP Bridge: Creating sidebar elements...");
     
+    // Prevent duplicate injection (all_frames might cause this)
+    if (document.getElementById('mcp-sidebar')) {
+        console.log("MCP Bridge: Sidebar already exists, skipping.");
+        return;
+    }
+
     const sidebar = document.createElement('div');
     sidebar.id = 'mcp-sidebar';
     sidebar.className = 'hidden';
@@ -41,18 +46,18 @@ function createSidebar() {
 
     const toggle = document.createElement('div');
     toggle.id = 'mcp-toggle';
-    toggle.className = 'hidden'; // Start at right: 0 since sidebar is hidden
-    toggle.innerHTML = '‹';
+    // No hidden class - toggle is always visible at right:0
+    toggle.innerHTML = '◀';
     toggle.onclick = () => {
         console.log("MCP Bridge: Toggle clicked");
-        sidebar.classList.toggle('hidden');
-        toggle.classList.toggle('hidden');
-        toggle.innerHTML = sidebar.classList.contains('hidden') ? '‹' : '›';
+        const isHidden = sidebar.classList.toggle('hidden');
+        toggle.classList.toggle('sidebar-open', !isHidden);
+        toggle.innerHTML = isHidden ? '◀' : '▶';
     };
 
     document.body.appendChild(sidebar);
     document.body.appendChild(toggle);
-    console.log("MCP Bridge: Sidebar and Toggle appended to body.");
+    console.log("MCP Bridge: Sidebar and Toggle appended to body. Toggle should be visible at right edge.");
 
     // Event Listeners
     const btnConnect = document.getElementById('btn-connect');

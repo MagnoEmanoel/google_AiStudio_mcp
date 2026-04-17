@@ -1,157 +1,160 @@
 /* 
  * MCP Bridge - Premium Sidebar Styles
  * Glassmorphism Design System
+ * Uses !important to override Google AI Studio's aggressive CSS
  */
 
 #mcp-sidebar {
-    position: fixed;
-    right: 0;
-    top: 0;
-    width: 320px;
-    height: 100vh;
-    background: rgba(20, 20, 25, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-    z-index: 9999;
-    color: #f0f0f0;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    display: flex;
-    flex-direction: column;
-    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: fixed !important;
+    right: 0 !important;
+    top: 0 !important;
+    width: 320px !important;
+    height: 100vh !important;
+    background: rgba(20, 20, 25, 0.95) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
+    z-index: 2147483647 !important;
+    color: #f0f0f0 !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5) !important;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    overflow: visible !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
 }
 
 #mcp-sidebar.hidden {
-    transform: translateX(100%);
+    transform: translateX(100%) !important;
 }
 
 #mcp-header {
-    padding: 20px;
-    background: linear-gradient(135deg, rgba(66, 133, 244, 0.2), rgba(161, 75, 245, 0.2));
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px !important;
+    background: linear-gradient(135deg, rgba(66, 133, 244, 0.2), rgba(161, 75, 245, 0.2)) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 #mcp-header h2 {
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    background: linear-gradient(to right, #fff, #aaa);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    margin: 0 !important;
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.02em !important;
+    background: linear-gradient(to right, #fff, #aaa) !important;
+    background-clip: text !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
 }
 
 #mcp-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 15px;
+    flex: 1 !important;
+    overflow-y: auto !important;
+    padding: 15px !important;
 }
 
 .mcp-section {
-    margin-bottom: 20px;
+    margin-bottom: 20px !important;
 }
 
 .mcp-section h3 {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    color: #888;
-    margin-bottom: 10px;
+    font-size: 0.8rem !important;
+    text-transform: uppercase !important;
+    color: #888 !important;
+    margin-bottom: 10px !important;
 }
 
 .mcp-button {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #fff;
-    padding: 10px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    width: 100%;
-    text-align: left;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+    padding: 10px 15px !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    font-size: 0.9rem !important;
+    width: 100% !important;
+    text-align: left !important;
+    transition: all 0.2s !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin-bottom: 8px !important;
 }
 
 .mcp-button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
 }
 
 .mcp-button.primary {
-    background: linear-gradient(135deg, #4285f4, #a14bf5);
-    border: none;
+    background: linear-gradient(135deg, #4285f4, #a14bf5) !important;
+    border: none !important;
 }
 
 .mcp-button.primary:hover {
-    filter: brightness(1.2);
+    filter: brightness(1.2) !important;
 }
 
 .file-item {
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    padding: 6px 10px !important;
+    border-radius: 4px !important;
+    font-size: 0.85rem !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
 
 .file-item:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.05) !important;
 }
 
 #mcp-toggle {
-    position: fixed;
-    right: 320px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(20, 20, 25, 0.85);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-right: none;
-    padding: 10px 5px;
-    border-radius: 8px 0 0 8px;
-    cursor: pointer;
-    z-index: 9999;
-    color: #fff;
-    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: fixed !important;
+    right: 0 !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    background: rgba(66, 133, 244, 0.9) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    border-right: none !important;
+    padding: 15px 8px !important;
+    border-radius: 8px 0 0 8px !important;
+    cursor: pointer !important;
+    z-index: 2147483647 !important;
+    color: #fff !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    display: block !important;
+    min-width: 20px !important;
+    min-height: 40px !important;
+    line-height: 40px !important;
+    text-align: center !important;
+    box-shadow: -3px 0 10px rgba(0, 0, 0, 0.5) !important;
 }
 
-#mcp-toggle.hidden {
-    right: 0;
+#mcp-toggle.sidebar-open {
+    right: 320px !important;
 }
 
 #mcp-footer {
-    padding: 10px;
-    font-size: 0.7rem;
-    color: #666;
-    text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 10px !important;
+    font-size: 0.7rem !important;
+    color: #666 !important;
+    text-align: center !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 
 #mcp-footer a {
-    color: #888;
-    text-decoration: none;
+    color: #888 !important;
+    text-decoration: none !important;
 }
 
 #mcp-footer a:hover {
-    color: #fff;
-}
-
-::-webkit-scrollbar {
-    width: 6px;
-}
-
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
+    color: #fff !important;
 }
