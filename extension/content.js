@@ -1,19 +1,20 @@
 /**
- * MCP Bridge - Content Script Refined
+ * MCP Bridge - Content Script High Reliability
  */
 
 function createSidebar() {
     if (document.getElementById('mcp-sidebar')) return;
 
-    // Sidebar Container
     const sidebar = document.createElement('div');
     sidebar.id = 'mcp-sidebar';
-    // Start closed
     sidebar.classList.remove('open');
     
     sidebar.innerHTML = `
         <div id="mcp-header">
             <h2>MCP Context Bridge</h2>
+            <div id="agent-signal" style="display:none; color: #00ff00; font-size: 0.7rem; font-weight: bold; margin-top: 5px;">
+                🔴 AGENT COMMAND DETECTED...
+            </div>
         </div>
         <div id="mcp-content">
             <div class="mcp-section">
@@ -40,20 +41,16 @@ function createSidebar() {
         </div>
     `;
 
-    // Toggle Button
     const toggle = document.createElement('div');
     toggle.id = 'mcp-toggle';
     toggle.innerText = '◀';
     toggle.onclick = () => {
         const isOpen = sidebar.classList.toggle('open');
         toggle.innerText = isOpen ? '▶' : '◀';
-        console.log("MCP Bridge: Sidebar " + (isOpen ? "opened" : "closed"));
     };
 
     document.body.appendChild(sidebar);
     document.body.appendChild(toggle);
-
-    // Event Listeners
     setupEventListeners();
 }
 
@@ -69,15 +66,9 @@ function setupEventListeners() {
                     status.innerText = "Connected to localhost:3000";
                     status.style.color = "#0f9d58";
                     btnConnect.style.display = 'none';
-                    console.log("MCP Bridge: SSE Connected!");
                 };
-                eventSource.onerror = () => {
-                    status.innerText = "Connection Failed. Retrying...";
-                    status.style.color = "#ff4b4b";
-                };
-            } catch (e) {
-                console.error("MCP Bridge: SSE Error", e);
-            }
+                eventSource.onerror = () => { status.innerText = "Conn Failed. Retrying..."; };
+            } catch (e) { console.error("SSE Error", e); }
         };
     }
 
@@ -93,53 +84,58 @@ function setupEventListeners() {
 }
 
 /**
- * Universal Agentic Observer
+ * High-Reliability Observer: Scans entire page text for commands
  */
 function startAgenticObserver() {
-    console.log("MCP Bridge: Universal Agentic Observer active (Firefox Optimized).");
+    console.log("MCP Bridge: High-Reliability Observer active.");
     
-    const observer = new MutationObserver((mutations) => {
-        // High-performance check for model output
-        const modelBlocks = document.querySelectorAll('ms-one-message:not([data-mcp-checked]), .model-message:not([data-mcp-checked]), .ms-message-content:not([data-mcp-checked])');
+    // Set to track already processed commands (by their path) to avoid loops
+    const handledPaths = new Set();
+
+    const observer = new MutationObserver(() => {
+        // Scan the entire body text for the pattern
+        const bodyText = document.body.innerText;
+        const match = bodyText.match(/\[READ:\s*(.*?)\]/);
         
-        modelBlocks.forEach(el => {
-            const text = el.innerText;
-            if (text.includes('[READ:')) {
-                const match = text.match(/\[READ:\s*(.*?)\]/);
-                if (match && match[1]) {
-                    const filePath = match[1].trim();
-                    console.log("%c MCP Bridge: Command detected -> " + filePath, "color: #4285f4; font-weight: bold; padding: 2px 5px; border: 1px solid #4285f4; border-radius: 3px;");
-                    el.setAttribute('data-mcp-checked', 'true'); // Mark as handled
-                    handleAgenticRead(filePath);
+        if (match && match[1]) {
+            const filePath = match[1].trim();
+            if (!handledPaths.has(filePath)) {
+                console.log("%c MCP Bridge: COMMAND DETECTED -> " + filePath, "background: #4285f4; color: white; padding: 2px 5px;");
+                handledPaths.add(filePath);
+                
+                // Visual Signal
+                const signal = document.getElementById('agent-signal');
+                if (signal) {
+                    signal.style.display = 'block';
+                    setTimeout(() => { signal.style.display = 'none'; }, 5000);
                 }
+                
+                handleAgenticRead(filePath);
             }
-        });
+        }
     });
 
-    observer.observe(document.body, { childList: true, subtree: true });
+    observer.observe(document.body, { childList: true, subtree: true, characterData: true });
 }
 
 async function handleAgenticRead(path) {
     try {
-        console.log("MCP Bridge: Fetching file...", path);
         const fileContent = await fetchFromMCP('local_explorer', { action: 'read', path });
-        
-        const injectedText = `\n\n--- AUTO-INJECTED CONTEXT: ${path} ---\n${fileContent}\n--- END CONTEXT ---`;
+        const injectedText = `\n\n--- FILE CONTENT: ${path} ---\n${fileContent}\n--- END ---`;
         const success = await injectToSystemInstructions(injectedText);
         
         if (success) {
-            console.log("%c MCP Bridge: Success! Data injected into System Instructions.", "color: #0f9d58; font-weight: bold;");
-            injectToChat(`[Context Loaded: ${path.split('/').pop()}]`);
+            console.log("MCP Bridge: Injection OK for", path);
+            injectToChat(`[READY: File ${path.split('/').pop()} has been loaded into context]`);
         } else {
-            console.warn("MCP Bridge: Failed to inject to System Instructions, falling back to chat injection.");
             injectToChat(injectedText);
         }
     } catch (e) {
-        console.error("MCP Bridge Agentic Error:", e);
+        console.error("MCP Bridge Read Error", e);
     }
 }
 
-// Initialize
+// Init
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => { createSidebar(); startAgenticObserver(); });
 } else {
