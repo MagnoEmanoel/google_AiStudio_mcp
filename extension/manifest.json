@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "MCP Bridge for AI Studio",
+  "version": "1.0.0",
+  "description": "Brings MCP capabilities to Google AI Studio.",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://aistudio.google.com/*",
+    "http://localhost:3000/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://aistudio.google.com/*"],
+      "js": ["content.js", "ui_logic.js"],
+      "css": ["sidebar.css"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
